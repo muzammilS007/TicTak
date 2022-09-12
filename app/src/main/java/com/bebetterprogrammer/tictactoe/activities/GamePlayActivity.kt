@@ -27,12 +27,12 @@ class GamePlayActivity : BaseActivity() {
     var gameState = arrayOf(2, 2, 2, 2, 2, 2, 2, 2, 2)
     lateinit var p1: String
     lateinit var p2: String
-    var player by Delegates.notNull<Int>()
-    var vsWhom by Delegates.notNull<Int>()
-    var weapon by Delegates.notNull<Int>()
-    var jarvis by Delegates.notNull<Int>()
-    var whichFirst by Delegates.notNull<Int>()
-    var whichLevel by Delegates.notNull<Int>()
+    var player : Int = 0
+    var vsWhom : Int = 0
+    var weapon : Int = 0
+    var jarvis : Int = 0
+    var whichFirst : Int = 0
+    var whichLevel : Int = 0
     var done = 0
     var getP = GetPosition()
     var flag = false

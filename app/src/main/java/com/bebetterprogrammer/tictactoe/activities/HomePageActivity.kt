@@ -6,16 +6,25 @@ import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bebetterprogrammer.tictactoe.BuildConfig
 import com.bebetterprogrammer.tictactoe.R
+import com.bebetterprogrammer.tictactoe.databinding.ActivityHomePageBinding
+import com.bebetterprogrammer.tictactoe.recyleview.GameAdapter
 import kotlinx.android.synthetic.main.activity_home_page.*
 
 class HomePageActivity : BaseActivity() {
+    var binding : ActivityHomePageBinding? = null
+    var adapter : GameAdapter?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_home_page)
+        binding = ActivityHomePageBinding.inflate(layoutInflater)
+        setContentView(binding?.root)
+        adapter = GameAdapter()
+        binding?.gamelistview?.layoutManager = LinearLayoutManager(this)
+        binding?.gamelistview?.adapter = adapter
 
-        val versionName = BuildConfig.VERSION_NAME
+/*        val versionName = BuildConfig.VERSION_NAME
         appBottomLine.text = "Designed @ bebetterprogrammer.com | v$versionName"
 
         var musicPref: SharedPreferences = this.getSharedPreferences("Music", Context.MODE_PRIVATE)
@@ -68,6 +77,6 @@ class HomePageActivity : BaseActivity() {
             editor.putInt("Pref", 1)
             editor.commit()
             stopService(Intent(this, MusicService::class.java))
-        }
+        }*/
     }
 }
