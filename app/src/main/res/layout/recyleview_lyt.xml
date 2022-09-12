@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+<FrameLayout
+     app:layout_constraintTop_toTopOf="parent"
+
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+    <include  android:id="@+id/startview" layout="@layout/start_new_tic_tac_view"/>
+    <include android:visibility="gone" android:id="@+id/friendgameview" layout="@layout/new_play_with_friend_view"/>
+    <include android:visibility="gone" android:id="@+id/computergameview" layout="@layout/new_play_with_computer_view"/>
+    <include android:visibility="gone" android:id="@+id/gameview" layout="@layout/game_play_view"/>
+
+</FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
