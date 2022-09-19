@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.bebetterprogrammer.tictactoe.BuildConfig
 import com.bebetterprogrammer.tictactoe.R
@@ -17,9 +18,10 @@ import com.bebetterprogrammer.tictactoe.databinding.*
 import com.bebetterprogrammer.tictactoe.utils.GamePlayUtility
 import com.bebetterprogrammer.tictactoe.utils.GetPosition
 import com.bebetterprogrammer.tictactoe.utils.Result
+import kotlin.coroutines.coroutineContext
 
 
-class GameAdapter : RecyclerView.Adapter<GameViewHolder>() {
+class GameAdapter() : RecyclerView.Adapter<GameViewHolder>() {
     var gametype = 1 // ! : computer , 2: Friend
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GameViewHolder {
         return GameViewHolder(
@@ -28,15 +30,26 @@ class GameAdapter : RecyclerView.Adapter<GameViewHolder>() {
                 parent,
                 false
             )
+
         )
     }
 
     override fun onBindViewHolder(holder: GameViewHolder, position: Int) {
 
+        holder.binding.splashview.btnplay.setOnClickListener {
+
+            holder.binding.splashview.root.visibility = View.GONE
+            holder.binding.startview.root.visibility = View.VISIBLE
+            holder.binding.computergameview.root.visibility = View.GONE
+            holder.binding.friendgameview.root.visibility = View.GONE
+
+            holder.startComputerGame()
+        }
 
         holder.binding.startview.playWithJarvis.setOnClickListener {
             gametype = 1
 
+            holder.binding.splashview.root.visibility = View.GONE
             holder.binding.startview.root.visibility = View.GONE
             holder.binding.computergameview.root.visibility = View.VISIBLE
             holder.binding.friendgameview.root.visibility = View.GONE
@@ -46,61 +59,100 @@ class GameAdapter : RecyclerView.Adapter<GameViewHolder>() {
 
         holder.binding.startview.playWithFriend.setOnClickListener {
             gametype = 2
+//            holder.binding.splashview.root.visibility = View.GONE
+//
+//            holder.binding.startview.root.visibility = View.GONE
+//            holder.binding.computergameview.root.visibility = View.GONE
+//            holder.binding.friendgameview.root.visibility = View.VISIBLE
+//
+//            holder.startGameWithFriend()
 
-            holder.binding.startview.root.visibility = View.GONE
-            holder.binding.computergameview.root.visibility = View.GONE
-            holder.binding.friendgameview.root.visibility = View.VISIBLE
-
-            holder.startGameWithFriend()
+            holder.playfriendgame{flag ->
+                if(flag)
+                {
+                    holder.binding.startview.root.visibility = View.GONE
+                    holder.binding.computergameview.root.visibility = View.GONE
+                    holder.binding.friendgameview.root.visibility = View.GONE
+                    holder.binding.gameview.root.visibility = View.VISIBLE
+                }
+            }
         }
 
-        holder.binding.computergameview.btnback.setOnClickListener {
-            holder.binding.startview.root.visibility = View.VISIBLE
-            holder.binding.computergameview.root.visibility = View.GONE
-            holder.binding.friendgameview.root.visibility = View.GONE
-            holder.gamereset()
-        }
+//        holder.binding.computergameview.btnback.setOnClickListener {
+//
+//
+//            holder.binding.startview.root.visibility = View.VISIBLE
+//            holder.binding.computergameview.root.visibility = View.GONE
+//            holder.binding.friendgameview.root.visibility = View.GONE
+//            holder.gamereset()
+//        }
 
-        holder.binding.friendgameview.btnback.setOnClickListener {
-            holder.binding.startview.root.visibility = View.VISIBLE
-            holder.binding.computergameview.root.visibility = View.GONE
-            holder.binding.friendgameview.root.visibility = View.GONE
-            holder.gamereset()
-        }
+//        holder.binding.friendgameview.btnback.setOnClickListener {
+//            holder.binding.startview.root.visibility = View.VISIBLE
+//            holder.binding.computergameview.root.visibility = View.GONE
+//            holder.binding.friendgameview.root.visibility = View.GONE
+//            holder.gamereset()
+//        }
 
-        holder.binding.computergameview.btnQuit.setOnClickListener {
-            holder.binding.startview.root.visibility = View.VISIBLE
-            holder.binding.computergameview.root.visibility = View.GONE
-            holder.binding.friendgameview.root.visibility = View.GONE
+//        holder.binding.computergameview.btnQuit.setOnClickListener {
+//            holder.binding.startview.root.visibility = View.VISIBLE
+//            holder.binding.computergameview.root.visibility = View.GONE
+//            holder.binding.friendgameview.root.visibility = View.GONE
+//
+//            holder.gamereset()
+//
+//        }
 
-            holder.gamereset()
+//        holder.binding.friendgameview.btnQuit.setOnClickListener {
+//            holder.binding.startview.root.visibility = View.VISIBLE
+//            holder.binding.computergameview.root.visibility = View.GONE
+//            holder.binding.friendgameview.root.visibility = View.GONE
+//
+//            holder.gamereset()
+//        }
 
-        }
-
-        holder.binding.friendgameview.btnQuit.setOnClickListener {
-            holder.binding.startview.root.visibility = View.VISIBLE
-            holder.binding.computergameview.root.visibility = View.GONE
-            holder.binding.friendgameview.root.visibility = View.GONE
-
-            holder.gamereset()
-        }
-
-        holder.binding.computergameview.btnPlay.setOnClickListener {
+        holder.binding.computergameview.diffLow.setOnClickListener {
             holder.binding.startview.root.visibility = View.GONE
             holder.binding.computergameview.root.visibility = View.GONE
             holder.binding.friendgameview.root.visibility = View.GONE
             holder.binding.gameview.root.visibility = View.VISIBLE
 
-            holder.playcomputergame()
+            holder.playcomputergame(0)
         }
+
+        holder.binding.computergameview.diffMedium.setOnClickListener {
+            holder.binding.startview.root.visibility = View.GONE
+            holder.binding.computergameview.root.visibility = View.GONE
+            holder.binding.friendgameview.root.visibility = View.GONE
+            holder.binding.gameview.root.visibility = View.VISIBLE
+
+            holder.playcomputergame(1)
+        }
+
+        holder.binding.computergameview.diffHigh.setOnClickListener {
+            holder.binding.startview.root.visibility = View.GONE
+            holder.binding.computergameview.root.visibility = View.GONE
+            holder.binding.friendgameview.root.visibility = View.GONE
+            holder.binding.gameview.root.visibility = View.VISIBLE
+
+            holder.playcomputergame(1)
+        }
+
 
         holder.binding.friendgameview.btnPlay.setOnClickListener {
-            holder.binding.startview.root.visibility = View.GONE
-            holder.binding.computergameview.root.visibility = View.GONE
-            holder.binding.friendgameview.root.visibility = View.GONE
-            holder.binding.gameview.root.visibility = View.VISIBLE
 
-            holder.playfriendgame()
+            holder.playfriendgame{flag ->
+                if(flag)
+                {
+                    holder.binding.startview.root.visibility = View.GONE
+                    holder.binding.computergameview.root.visibility = View.GONE
+                    holder.binding.friendgameview.root.visibility = View.GONE
+                    holder.binding.gameview.root.visibility = View.VISIBLE
+                }
+            }
+
+
+
         }
 
         holder.binding.gameview.btnback.setOnClickListener {
@@ -122,35 +174,64 @@ class GameAdapter : RecyclerView.Adapter<GameViewHolder>() {
         }
 
 
+
     }
 
     override fun getItemCount(): Int {
         return 1
     }
+
+
 }
 
 class GameViewHolder(val binding: RecyleviewLytBinding) : RecyclerView.ViewHolder(binding.root) {
+
+
     var playWithComputer = PlayWithComputer(binding.computergameview, binding.root.context)
     var playwithFriend = PlayWithFriend(binding = binding.friendgameview, context = binding.root.context)
-    var playgame = GamePlay(context = binding.root.context, binding = binding.gameview)
+    var playgame = GamePlay(context = binding.root.context, binding = binding.gameview){
+
+         binding.splashview.root.visibility = View.VISIBLE
+         binding.startview.root.visibility = View.GONE
+         binding.computergameview.root.visibility = View.GONE
+         binding.friendgameview.root.visibility = View.GONE
+         binding.gameview.root.visibility = View.GONE
+         gamereset()
+
+    }
     fun startComputerGame() {
         playWithComputer.init()
     }
+
 
     fun startGameWithFriend() {
         playwithFriend.init()
     }
 
-    fun playcomputergame() {
-        playWithComputer.moveFirst { flag, flag1, flag2 ->
+    fun playcomputergame(i: Int) {
+        playWithComputer.moveFirst(i) { flag, flag1, flag2 ->
             playgame.fromComputerGame(flag, flag1, flag2)
         }
     }
 
-    fun playfriendgame() {
-        playwithFriend.moveFirst { player1, player2, player ->
-            playgame.fromFriendGame(player1, player2, player)
-        }
+    fun playfriendgame( callback:( flag : Boolean)->Unit) {
+
+        playgame.fromFriendGame("player1", "player2", 1)
+        callback(true)
+
+//        playwithFriend.moveFirst { player1, player2, player ->
+//
+//            playgame.fromFriendGame("player1", "player2", 1)
+//            callback(true)
+////            if(player1.isNotEmpty() && player2.isNotEmpty()) {
+////                playgame.fromFriendGame(player1, player2, player)
+////                callback(true)
+////
+////            }
+////            else{
+////                callback(false)
+////            }
+//        }
     }
 
     fun gamereset(){
@@ -166,66 +247,66 @@ class GameViewHolder(val binding: RecyleviewLytBinding) : RecyclerView.ViewHolde
 
 }
 
-class PlayWithComputer(val binding: NewPlayWithComputerViewBinding, val context: Context) {
+class PlayWithComputer(val binding: SelectLevelViewBinding, val context: Context) {
     var flag: Int = 0
     var flag1: Int = 0
     var flag2: Int = 0
     fun init() {
 
         val versionName = BuildConfig.VERSION_NAME
-        binding.appBottomLine.text = "Designed @ bebetterprogrammer.com | v$versionName"
+//        binding.appBottomLine.text = "Designed @ bebetterprogrammer.com | v$versionName"
+//
+//
+//
+//        binding.diffLow.setBackgroundResource(R.drawable.layout_difficulty_button_secondary)
+//        binding.weaponCircle.setImageResource(R.drawable.ic_circle_secondary)
+//        binding.circleMove.setImageResource(R.drawable.ic_circle_secondary)
 
+//        binding.diffLow.setOnClickListener(View.OnClickListener {
+//            binding.diffLow.setBackgroundResource(R.drawable.layout_difficulty_button_secondary)
+//            binding.diffMedium.setBackgroundResource(R.drawable.layout_difficulty_button)
+//            binding.diffHigh.setBackgroundResource(R.drawable.layout_difficulty_button)
+//            flag = 0
+//        })
+//        binding.diffMedium.setOnClickListener(View.OnClickListener {
+//            binding.diffLow.setBackgroundResource(R.drawable.layout_difficulty_button)
+//            binding.diffMedium.setBackgroundResource(R.drawable.layout_difficulty_button_secondary)
+//            binding.diffHigh.setBackgroundResource(R.drawable.layout_difficulty_button)
+//            flag = 1
+//        })
+//        binding.diffHigh.setOnClickListener(View.OnClickListener {
+//            binding.diffLow.setBackgroundResource(R.drawable.layout_difficulty_button)
+//            binding.diffMedium.setBackgroundResource(R.drawable.layout_difficulty_button)
+//            binding.diffHigh.setBackgroundResource(R.drawable.layout_difficulty_button_secondary)
+//            flag = 2
+//        })
 
-
-        binding.diffLow.setBackgroundResource(R.drawable.layout_difficulty_button_secondary)
-        binding.weaponCircle.setImageResource(R.drawable.ic_circle_secondary)
-        binding.circleMove.setImageResource(R.drawable.ic_circle_secondary)
-
-        binding.diffLow.setOnClickListener(View.OnClickListener {
-            binding.diffLow.setBackgroundResource(R.drawable.layout_difficulty_button_secondary)
-            binding.diffMedium.setBackgroundResource(R.drawable.layout_difficulty_button)
-            binding.diffHigh.setBackgroundResource(R.drawable.layout_difficulty_button)
-            flag = 0
-        })
-        binding.diffMedium.setOnClickListener(View.OnClickListener {
-            binding.diffLow.setBackgroundResource(R.drawable.layout_difficulty_button)
-            binding.diffMedium.setBackgroundResource(R.drawable.layout_difficulty_button_secondary)
-            binding.diffHigh.setBackgroundResource(R.drawable.layout_difficulty_button)
-            flag = 1
-        })
-        binding.diffHigh.setOnClickListener(View.OnClickListener {
-            binding.diffLow.setBackgroundResource(R.drawable.layout_difficulty_button)
-            binding.diffMedium.setBackgroundResource(R.drawable.layout_difficulty_button)
-            binding.diffHigh.setBackgroundResource(R.drawable.layout_difficulty_button_secondary)
-            flag = 2
-        })
-
-        binding.weaponCircle.setOnClickListener(View.OnClickListener {
-            binding.weaponCircle.setImageResource(R.drawable.ic_circle_secondary)
-            binding.weaponCross.setImageResource(R.drawable.ic_cross_white)
-            flag1 = 0
-        })
-        binding.weaponCross.setOnClickListener(View.OnClickListener {
-            binding.weaponCircle.setImageResource(R.drawable.ic_circle_white)
-            binding.weaponCross.setImageResource(R.drawable.ic_cross_secondary)
-            flag1 = 1
-        })
-        binding.circleMove.setOnClickListener(View.OnClickListener {
-            binding.circleMove.setImageResource(R.drawable.ic_circle_secondary)
-            binding.crossMove.setImageResource(R.drawable.ic_cross_white)
-            flag2 = 0
-        })
-        binding.crossMove.setOnClickListener(View.OnClickListener {
-            binding.circleMove.setImageResource(R.drawable.ic_circle_white)
-            binding.crossMove.setImageResource(R.drawable.ic_cross_secondary)
-            flag2 = 1
-        })
+//        binding.weaponCircle.setOnClickListener(View.OnClickListener {
+//            binding.weaponCircle.setImageResource(R.drawable.ic_circle_secondary)
+//            binding.weaponCross.setImageResource(R.drawable.ic_cross_white)
+//            flag1 = 0
+//        })
+//        binding.weaponCross.setOnClickListener(View.OnClickListener {
+//            binding.weaponCircle.setImageResource(R.drawable.ic_circle_white)
+//            binding.weaponCross.setImageResource(R.drawable.ic_cross_secondary)
+//            flag1 = 1
+//        })
+//        binding.circleMove.setOnClickListener(View.OnClickListener {
+//            binding.circleMove.setImageResource(R.drawable.ic_circle_secondary)
+//            binding.crossMove.setImageResource(R.drawable.ic_cross_white)
+//            flag2 = 0
+//        })
+//        binding.crossMove.setOnClickListener(View.OnClickListener {
+//            binding.circleMove.setImageResource(R.drawable.ic_circle_white)
+//            binding.crossMove.setImageResource(R.drawable.ic_cross_secondary)
+//            flag2 = 1
+//        })
 
     }
 
-    fun moveFirst(callbackflag: (flag: Int, flag1: Int, flag2: Int) -> Unit) {
+    fun moveFirst(level : Int,callbackflag: (flag: Int, flag1: Int, flag2: Int) -> Unit) {
 
-        callbackflag(flag, flag1, flag2)
+        callbackflag(level, 1, 0)
 
     }
 
@@ -334,7 +415,7 @@ class PlayWithFriend(val binding: NewPlayWithFriendViewBinding, val context: Con
 
 }
 
-class GamePlay(val context: Context, val binding: GamePlayViewBinding?) {
+class GamePlay(val context: Context, val binding: GamePlayViewBinding?,val quitcallback : ()->Unit) {
     var x: Int = 0
     var turn: Int = 0
     var first: Int = 0
@@ -700,7 +781,7 @@ class GamePlay(val context: Context, val binding: GamePlayViewBinding?) {
             Handler().postDelayed({
                 reset()
                 alertDialog.dismiss()
-
+                quitcallback()
             }, 400)
         }
     }

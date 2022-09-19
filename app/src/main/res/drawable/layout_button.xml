@@ -5,8 +5,8 @@
             <corners android:radius="6dp" />
             <gradient
                 android:angle="0"
-                android:endColor="@color/colorPrimary"
-                android:startColor="@color/colorSecondary"
+                android:endColor="#FFEB3B"
+                android:startColor="#F1DB17"
                 android:type="linear" />
         </shape>
     </item>
@@ -18,8 +18,8 @@
             <corners android:radius="4dp" />
             <gradient
                 android:angle="0"
-                android:endColor="@color/buttonEndColor"
-                android:startColor="@color/buttonStartColor"
+                android:endColor="#F1B502"
+                android:startColor="#FAE214"
                 android:type="linear" />
         </shape>
     </item>
