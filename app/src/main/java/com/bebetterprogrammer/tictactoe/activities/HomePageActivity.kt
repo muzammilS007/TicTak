@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bebetterprogrammer.tictactoe.BuildConfig
@@ -13,7 +14,7 @@ import com.bebetterprogrammer.tictactoe.databinding.ActivityHomePageBinding
 import com.bebetterprogrammer.tictactoe.recyleview.GameAdapter
 import kotlinx.android.synthetic.main.activity_home_page.*
 
-class HomePageActivity : BaseActivity() {
+class HomePageActivity : AppCompatActivity() {
     var binding : ActivityHomePageBinding? = null
     var adapter : GameAdapter?=null
     override fun onCreate(savedInstanceState: Bundle?) {
